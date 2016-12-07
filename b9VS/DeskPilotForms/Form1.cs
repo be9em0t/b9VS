@@ -49,6 +49,7 @@ namespace DeskPilotForms
       Console.WriteLine("=============");
 
       InitializeTreeView();
+      //InitializeTreeViewDemo();
     }
 
 
@@ -74,7 +75,7 @@ namespace DeskPilotForms
     private void InitializeTreeView()
     {
       ArrayList procCouple = new ArrayList();
-
+      treeViewWin.Nodes.Clear();
       treeViewWin.BeginUpdate();
       Process[] processlist = Process.GetProcesses();      
       foreach (Process process in processlist)
@@ -86,15 +87,25 @@ namespace DeskPilotForms
           tn.Tag = process.MainWindowHandle;
           treeViewWin.Nodes.Add(tn);
 
-          //PrintChildren();
-
           List<IntPtr> childHands = WindowEnumTest.GetChildWindows(process.MainWindowHandle);
+
+          //treeViewWin.Nodes[tn.Index].Nodes.Add("blah");
+
           Console.WriteLine(childHands.Count);
           foreach (IntPtr chHand in childHands)
           {
-            Console.WriteLine(PinvokeMethods.GetText(chHand));
+            TreeNode tnc = new TreeNode();
+            string chWindowText = PinvokeMethods.GetText(chHand);
+            if (PinvokeMethods.IsVisible(chHand) == true && chWindowText != "")
+            {
+              tnc.Text = chWindowText;
+              tnc.Tag = chHand;
+              treeViewWin.Nodes[tn.Index].Nodes.Add(tnc);
+              Console.WriteLine(tn.Level + " : " + tn.Index + " : " + PinvokeMethods.GetText(chHand));
+            }
           }
 
+          //PrintChildren();
 
         }
       }
