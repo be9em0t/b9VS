@@ -7,24 +7,25 @@ namespace DeskPilotForms
 
     class PinvokeMethods
     {
-        // Define delegates
-        public delegate bool CallBackEW(int hwnd, int lParam);
+        // Delegates
+        public delegate bool CallBackEnumWin(int hwnd, int lParam);
 
-        private delegate bool EnumWindowProc(IntPtr hwnd, IntPtr lParam);
+        private delegate bool CallBackEnumChildWin(IntPtr hwnd, IntPtr lParam);
 
-        // Import unmanaged signatures
+        // Signatures
         [DllImport("user32")]
-        public static extern int EnumWindows(CallBackEW x, int y);
+        public static extern int EnumWindows(CallBackEnumWin x, int y);
 
         [DllImport("user32")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool EnumChildWindows(IntPtr window, EnumWindowProc callback, IntPtr lParam);
+        private static extern bool EnumChildWindows(IntPtr window, CallBackEnumChildWin callback, IntPtr lParam);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
 
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         static extern int GetWindowTextLength(IntPtr hWnd);
+
 
         // Define callback function 
         public static bool Report(int hwnd, int lParam)
@@ -37,7 +38,7 @@ namespace DeskPilotForms
         // main function
         public static void EnumWindowsMain()
         {
-            CallBackEW myCallBack = new CallBackEW(PinvokeMethods.Report);
+            CallBackEnumWin myCallBack = new CallBackEnumWin(PinvokeMethods.Report);
             EnumWindows(myCallBack, 0);
         }
 

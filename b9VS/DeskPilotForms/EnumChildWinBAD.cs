@@ -6,11 +6,11 @@ using System.Diagnostics;
 
 public class WindowHandleInfo
 {
-    private delegate bool EnumWindowProc(IntPtr hwnd, IntPtr lParam);
+    private delegate bool CallBackEnumChildWin(IntPtr hwnd, IntPtr lParam);
 
     [DllImport("user32")]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool EnumChildWindows(IntPtr window, EnumWindowProc callback, IntPtr lParam);
+    private static extern bool EnumChildWindows(IntPtr window, CallBackEnumChildWin callback, IntPtr lParam);
 
     private IntPtr _MainHandle;
 
@@ -28,7 +28,7 @@ public class WindowHandleInfo
 
         try
         {
-            EnumWindowProc childProc = new EnumWindowProc(EnumWindow);
+            CallBackEnumChildWin childProc = new CallBackEnumChildWin(EnumWindow);
             EnumChildWindows(this._MainHandle, childProc, pointerChildHandlesList);
         }
         finally

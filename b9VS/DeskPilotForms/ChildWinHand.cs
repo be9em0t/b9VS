@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 public class WindowEnumTest
 {
 
-    public delegate bool EnumWindowProc(IntPtr hWnd, IntPtr parameter);
+    public delegate bool CallBackEnumChildWin(IntPtr hWnd, IntPtr parameter);
 
     [DllImport("user32")]
     [return: MarshalAs(UnmanagedType.Bool)]
-    public static extern bool EnumChildWindows(IntPtr window, EnumWindowProc callback, IntPtr i);
+    public static extern bool EnumChildWindows(IntPtr window, CallBackEnumChildWin callback, IntPtr i);
 
     public static List<IntPtr> GetChildWindows(IntPtr parent)
     {
@@ -17,7 +17,7 @@ public class WindowEnumTest
         GCHandle listHandle = GCHandle.Alloc(result);
         try
         {
-            EnumWindowProc childProc = new EnumWindowProc(EnumWindow);
+            CallBackEnumChildWin childProc = new CallBackEnumChildWin(EnumWindow);
             EnumChildWindows(parent, childProc, GCHandle.ToIntPtr(listHandle));            
         }
         finally
